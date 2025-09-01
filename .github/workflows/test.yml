@@ -29,8 +29,9 @@ jobs:
          
      - name: Repeat configuration
        run: |
-         for i in {1..100} ; do
+         for i in {1..100}; do
          (
+         sleep $(awk -v min=0 -v max=0.2 'BEGIN{srand(); print min+rand()*(max-min)}')
          cx configure set --prop-name cx_base_uri --prop-value "dummy_url"
          cx configure set --prop-name cx_client_id --prop-value "dummy-client"
          cx configure set --prop-name cx_client_secret --prop-value "dummy-secret"
@@ -38,4 +39,5 @@ jobs:
          )&
           done
           wait
+          echo "Stress test completed. Check error.log for any crashes."
 
