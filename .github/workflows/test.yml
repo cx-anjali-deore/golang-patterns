@@ -9,6 +9,8 @@ jobs:
   test-cli:
    name: Test
    runs-on: ubuntu-latest
+   env:
+     GOMAXPROCS: 32
 
    steps:
      - name: Checkout
@@ -23,7 +25,6 @@ jobs:
          
      - name: Repeat configuration
        run: |
-         export GOMAXPROCS=32
          for i in {1..200}; do
          (
          cx configure set --prop-name cx_base_uri --prop-value "dummy_url_$i" &
