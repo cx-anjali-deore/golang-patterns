@@ -10,10 +10,6 @@ jobs:
    name: Test
    runs-on: ubuntu-latest
 
-   strategy:
-     matrix:
-       instance: [ 1, 2, 3, 4, 5,6,7,8,9,10 ]
-
    steps:
      - name: Checkout
        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
@@ -24,18 +20,11 @@ jobs:
          tar -xvzf ast-cli_2.3.29_linux_x64.tar.gz
          chmod +x ./cx
          sudo mv ./cx /usr/local/bin/cx
-
-     - name: Configure CLI
-       run: |
-         cx configure set --prop-name cx_base_uri --prop-value "dummy_url"
-         cx configure set --prop-name cx_client_id --prop-value "dummy-client"
-         cx configure set --prop-name cx_client_secret --prop-value "dummy-secret"
-         cx configure set --prop-name cx_tenant --prop-value "dummy-tenant"
          
      - name: Repeat configuration
        run: |
          export GOMAXPROCS=32
-         for i in {1..100}; do
+         for i in {1..200}; do
          (
          sleep $(awk -v min=0 -v max=0.2 'BEGIN{srand(); print min+rand()*(max-min)}')
          cx configure set --prop-name cx_base_uri --prop-value "dummy_url"
