@@ -26,12 +26,11 @@ jobs:
          export GOMAXPROCS=32
          for i in {1..200}; do
          (
-         sleep $(awk -v min=0 -v max=0.2 'BEGIN{srand(); print min+rand()*(max-min)}')
-         cx configure set --prop-name cx_base_uri --prop-value "dummy_url_$i"
-         cx configure set --prop-name cx_client_id --prop-value "dummy-client_$i"
-         cx configure set --prop-name cx_client_secret --prop-value "dummy-secret_$i"
-         cx configure set --prop-name cx_tenant --prop-value "dummy-tenant_$i"
-         cx auth validate
+         cx configure set --prop-name cx_base_uri --prop-value "dummy_url_$i" &
+         CX_PID=$!
+         sleep 0.05
+         kill -USR1 $CX_PID 2>/dev/null || echo "Process $CX_PID already exited"
+         wait $CX_PID
          )&
           done
           wait
