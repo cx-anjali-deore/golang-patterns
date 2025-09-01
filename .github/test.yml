@@ -1,0 +1,41 @@
+name: Test
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+   test-cli:
+   name: Test
+   runs-on: ubuntu-latest
+   steps:
+     - name: Checkout
+       uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+
+     - name:  Install Checkmarx CLI
+       run: |
+         curl -LO https://github.com/Checkmarx/ast-cli/releases/download/2.3.29/cx_2.3.29_linux_x64.tar.gz
+         tar -xvzf cx_2.3.29_linux_x64.tar.gz
+         chmod +x ./cx
+         sudo mv ./cx /usr/local/bin/cx
+
+     - name: Configure CLI
+       run: |
+         cx configure set --prop-name cx_base_uri --prop-value "dummy_url"
+         cx configure set --prop-name cx_client_id --prop-value "dummy-client"
+         cx configure set --prop-name cx_client_secret --prop-value "dummy-secret"
+         cx configure set --prop-name cx_tenant --prop-value "dummy-tenant"
+         
+     - name: Repeat configuration
+       run: |
+         for i in {1:20} ; do
+         (
+         cx configure set --prop-name cx_base_uri --prop-value "dummy_url"
+         cx configure set --prop-name cx_client_id --prop-value "dummy-client"
+         cx configure set --prop-name cx_client_secret --prop-value "dummy-secret"
+         cx configure set --prop-name cx_tenant --prop-value "dummy-tenant"
+         )&
+          done
+          wait
+
