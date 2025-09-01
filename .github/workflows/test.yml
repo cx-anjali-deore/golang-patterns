@@ -34,6 +34,7 @@ jobs:
          
      - name: Repeat configuration
        run: |
+         export GOMAXPROCS=32
          for i in {1..100}; do
          (
          sleep $(awk -v min=0 -v max=0.2 'BEGIN{srand(); print min+rand()*(max-min)}')
