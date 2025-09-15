@@ -34,6 +34,9 @@ jobs:
             --scs-repo-token ${{ secrets.GIT_PUSH_TOKEN }}
             --sca-exploitable-path true
 
+      - name: Fix permissions
+        run: chmod 644 cx_result.sarif/cx_result.sarif
+
       # Step 3: Show first 200 lines of SARIF (debugging)
       - name: Show SARIF header
         run: head -n 200 cx_result.sarif/cx_result.sarif || true
@@ -51,8 +54,7 @@ jobs:
         run: head -n 20 cx_result.sarif/cx_result.sarif
 
 
-      - name: Fix permissions
-        run: chmod 644 cx_result.sarif/cx_result.sarif
+
 
       # Step 5: Upload SARIF to GitHub Code Scanning (will likely reproduce the error)
       - name: Upload Checkmarx SARIF report
