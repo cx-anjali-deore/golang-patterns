@@ -10,7 +10,7 @@ permissions:
   security-events: write
 
 jobs:
-  checkmarx-sarif:
+  build:
     runs-on: ubuntu-latest
     steps:
       # Step 1: Checkout the repo
@@ -40,45 +40,7 @@ jobs:
         with:
           name: cx_result.sarif
           path: cx_result.sarif
-
-
-      - name: Fix permissions
-        run: chmod 644 ${{ github.workspace }}/cx_result.sarif/cx_result.sarif
-
-      # Step 3: Show first 200 lines of SARIF (debugging)
-      - name: Show SARIF header
-        run: head -n 200 ${{ github.workspace }}/cx_result.sarif/cx_result.sarif || true
-
-      # Step 4: Check artifact locations in SARIF
-      - name: Inspect SARIF artifact locations
-        run: |
-          sudo apt-get update && sudo apt-get install -y jq
-          echo "Artifact Locations in SARIF:"
-          jq -r '.runs[]?.results[]? 
-            | .locations?[]?.physicalLocation?.artifactLocation?.uri // "MISSING"' cx_result.sarif \
-            | sed '/^$/d' | sort | uniq -c
-
-      - name: Show SARIF header
-        run: head -n 20 ${{ github.workspace }}/cx_result.sarif/cx_result.sarif
-
-
-
-
-      # Step 5: Upload SARIF to GitHub Code Scanning (will likely reproduce the error)
       - name: Upload Checkmarx SARIF report
         uses: github/codeql-action/upload-sarif@v3
         with:
-          sarif_file: ${{ github.workspace }}/cx_result.sarif/cx_result.sarif
-
-      - name: Verify cx_result.sarif
-        run: |
-          if [ -f cx_result.sarif/cx_result.sarif ]; then
-            echo "✔ cx_result.sarif exists!"
-            ls -lh cx_result.sarif
-          else
-            echo "❌ cx_result.sarif NOT found!"
-            exit 1
-          fi
-
-   
-
+          sarif_file: cx_result.sarif
