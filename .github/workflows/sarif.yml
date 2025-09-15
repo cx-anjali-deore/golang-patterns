@@ -31,8 +31,17 @@ jobs:
             --report-format sarif
             --output-path cx_result.sarif
             --scs-repo-url https://github.com/WebGoat/WebGoat
+            -s https://github.com/WebGoat/WebGoat
             --scs-repo-token ${{ secrets.GIT_PUSH_TOKEN }}
             --sca-exploitable-path true
+            
+
+      - name: Upload XML Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ github.workspace }}/cx_result.sarif/cx_result.sarif
+          path: ${{ github.workspace }}/cx_result.sarif/cx_result.sarif
+
 
       - name: Fix permissions
         run: chmod 644 ${{ github.workspace }}/cx_result.sarif/cx_result.sarif
@@ -73,10 +82,4 @@ jobs:
           fi
 
    
-
-      - name: Upload XML Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ github.workspace }}/cx_result.sarif/cx_result.sarif
-          path: ${{ github.workspace }}/cx_result.sarif/cx_result.sarif
 
