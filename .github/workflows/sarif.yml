@@ -35,11 +35,11 @@ jobs:
             --sca-exploitable-path true
 
       - name: Fix permissions
-        run: chmod 644 cx_result.sarif/cx_result.sarif
+        run: chmod 644 ${{ github.workspace }}/cx_result.sarif/cx_result.sarif
 
       # Step 3: Show first 200 lines of SARIF (debugging)
       - name: Show SARIF header
-        run: head -n 200 cx_result.sarif/cx_result.sarif || true
+        run: head -n 200 ${{ github.workspace }}/cx_result.sarif/cx_result.sarif || true
 
       # Step 4: Check artifact locations in SARIF
       - name: Inspect SARIF artifact locations
@@ -51,7 +51,7 @@ jobs:
             | sed '/^$/d' | sort | uniq -c
 
       - name: Show SARIF header
-        run: head -n 20 cx_result.sarif/cx_result.sarif
+        run: head -n 20 ${{ github.workspace }}/cx_result.sarif/cx_result.sarif
 
 
 
@@ -77,6 +77,6 @@ jobs:
       - name: Upload XML Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: cx_result.sarif/cx_result.sarif
-          path: cx_result.sarif/cx_result.sarif
+          name: ${{ github.workspace }}/cx_result.sarif/cx_result.sarif
+          path: ${{ github.workspace }}/cx_result.sarif/cx_result.sarif
 
