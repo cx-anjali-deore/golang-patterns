@@ -30,7 +30,7 @@ jobs:
             --debug 
             --report-format sarif
             --output-path cx_result.sarif
-            --scs-repo-url https://github.com/WebGoat/WebGoat%22
+            --scs-repo-url https://github.com/WebGoat/WebGoat
             --scs-repo-token ${{ secrets.GIT_PUSH_TOKEN }}
             --sca-exploitable-path true
 
