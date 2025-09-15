@@ -38,8 +38,8 @@ jobs:
       - name: Upload XML Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ github.workspace }}/cx_result.sarif/cx_result.sarif
-          path: ${{ github.workspace }}/cx_result.sarif/cx_result.sarif
+          name: cx_result.sarif
+          path: cx_result.sarif
 
 
       - name: Fix permissions
