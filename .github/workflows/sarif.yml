@@ -47,11 +47,18 @@ jobs:
             | .locations?[]?.physicalLocation?.artifactLocation?.uri // "MISSING"' cx_result.sarif \
             | sed '/^$/d' | sort | uniq -c
 
+      - name: Show SARIF header
+        run: head -n 20 cx_result.sarif
+
+
+      - name: Fix permissions
+        run: chmod 644 cx_result.sarif
+
       # Step 5: Upload SARIF to GitHub Code Scanning (will likely reproduce the error)
       - name: Upload Checkmarx SARIF report
         uses: github/codeql-action/upload-sarif@v3
         with:
-          sarif_file: cx_result.sarif
+          sarif_file: ${{ github.workspace }}/cx_result.sarif
 
       - name: Verify cx_result.sarif
         run: |
@@ -63,12 +70,7 @@ jobs:
             exit 1
           fi
 
-      - name: Show SARIF header
-        run: head -n 20 cx_result.sarif
-
-
-      - name: Fix permissions
-        run: chmod 644 cx_result.sarif
+   
 
       - name: Upload XML Artifact
         uses: actions/upload-artifact@v4
@@ -76,8 +78,3 @@ jobs:
           name: cx_result.sarif
           path: cx_result.sarif
 
-
-      - name: Upload Checkmarx SARIF report
-        uses: github/codeql-action/upload-sarif@v3
-        with:
-          sarif_file: ${{ github.workspace }}/cx_result.sarif
