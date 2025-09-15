@@ -1,0 +1,54 @@
+name: Checkmarx Debug SARIF
+on:
+  push:
+    branches:
+      - master
+
+permissions:
+  actions: read
+  contents: read
+  security-events: write
+
+jobs:
+  checkmarx-sarif:
+    runs-on: ubuntu-latest
+    steps:
+      # Step 1: Checkout the repo
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Step 2: Run Checkmarx One CLI Action
+      - name: Checkmarx One CLI Action
+        uses: checkmarx/ast-github-action@main
+        with:
+          project_name: anjali-sarif
+          cx_tenant: cx_seg
+          base_uri: https://eu.ast.checkmarx.net/
+          cx_client_id: ${{ secrets.CX_CLIENT_ID }}
+          cx_client_secret: ${{ secrets.CX_CLIENT_SECRET }}
+          additional_params: >
+            --debug 
+            --report-format sarif
+            --output-path cx_result.sarif
+            --scs-repo-url https://github.com/WebGoat/WebGoat%22
+            --scs-repo-token ${{ secrets.GIT_PUSH_TOKEN }}
+            --sca-exploitable-path true
+
+      # Step 3: Show first 200 lines of SARIF (debugging)
+      - name: Show SARIF header
+        run: head -n 200 cx_result.sarif || true
+
+      # Step 4: Check artifact locations in SARIF
+      - name: Inspect SARIF artifact locations
+        run: |
+          sudo apt-get update && sudo apt-get install -y jq
+          echo "Artifact Locations in SARIF:"
+          jq -r '.runs[]?.results[]? 
+            | .locations?[]?.physicalLocation?.artifactLocation?.uri // "MISSING"' cx_result.sarif \
+            | sed '/^$/d' | sort | uniq -c
+
+      # Step 5: Upload SARIF to GitHub Code Scanning (will likely reproduce the error)
+      - name: Upload Checkmarx SARIF report
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: cx_result.sarif
