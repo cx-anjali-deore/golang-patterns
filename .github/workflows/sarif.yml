@@ -36,7 +36,7 @@ jobs:
 
       # Step 3: Show first 200 lines of SARIF (debugging)
       - name: Show SARIF header
-        run: head -n 200 cx_result.sarif || true
+        run: head -n 200 cx_result.sarif/cx_result.sarif || true
 
       # Step 4: Check artifact locations in SARIF
       - name: Inspect SARIF artifact locations
@@ -48,21 +48,21 @@ jobs:
             | sed '/^$/d' | sort | uniq -c
 
       - name: Show SARIF header
-        run: head -n 20 cx_result.sarif
+        run: head -n 20 cx_result.sarif/cx_result.sarif
 
 
       - name: Fix permissions
-        run: chmod 644 cx_result.sarif
+        run: chmod 644 cx_result.sarif/cx_result.sarif
 
       # Step 5: Upload SARIF to GitHub Code Scanning (will likely reproduce the error)
       - name: Upload Checkmarx SARIF report
         uses: github/codeql-action/upload-sarif@v3
         with:
-          sarif_file: ${{ github.workspace }}/cx_result.sarif
+          sarif_file: ${{ github.workspace }}/cx_result.sarif/cx_result.sarif
 
       - name: Verify cx_result.sarif
         run: |
-          if [ -f cx_result.sarif ]; then
+          if [ -f cx_result.sarif/cx_result.sarif ]; then
             echo "✔ cx_result.sarif exists!"
             ls -lh cx_result.sarif
           else
@@ -75,6 +75,6 @@ jobs:
       - name: Upload XML Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: cx_result.sarif
-          path: cx_result.sarif
+          name: cx_result.sarif/cx_result.sarif
+          path: cx_result.sarif/cx_result.sarif
 
